@@ -38,7 +38,7 @@ export default function BackgroundMedia() {
 					{isPlayingVideo2 ? (
 						<motion.video
 							ref={video2}
-							src="/media/video/vizard_intro.mp4"
+							src="/media/video/video-2"
 							className="h-full w-full object-contain"
 							preload="auto"
 							autoPlay
@@ -55,7 +55,7 @@ export default function BackgroundMedia() {
 								console.log("video1 ended");
 								setIsPlayingVideo2(true);
 							}}
-							src="/media/video/initial_video.mp4"
+							src="/media/video/video-1.mp4"
 							className="h-full w-full object-contain"
 							preload="auto"
 							autoPlay
