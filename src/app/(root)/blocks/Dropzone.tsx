@@ -3,7 +3,7 @@
 import { useCallback, useMemo, useRef, useState } from "react";
 import { AnimatePresence, motion } from "motion/react";
 import { useVideoStore } from "@/store/VideoStore";
-import { shadowsIntoLight } from "@/styles/fonts";
+import { poppins } from "@/styles/fonts";
 
 type DropzoneProps = {
   onFiles?: (files: File[]) => void;
@@ -161,15 +161,15 @@ export function Dropzone({
       </AnimatePresence>
       {!isPlaying && (
         <motion.div
-          className="pointer-events-none absolute bottom-6 left-1/2 -translate-x-1/2 text-white drop-shadow-md"
+          className="pointer-events-none absolute bottom-6 left-1/2 -translate-x-1/2 text-white drop-shadow-md text-center"
           initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
+          animate={{ opacity: 1, scale: 1.1 }}
           transition={{ duration: 1.5 }}
         >
           <span
-            className={`${shadowsIntoLight.className} text-3xl md:text-4xl`}
+            className={`${poppins.className} text-xl md:text-2xl text-center`}
           >
-            Drag & Drop file
+            Drag and drop a screenshot of your poker play
           </span>
         </motion.div>
       )}

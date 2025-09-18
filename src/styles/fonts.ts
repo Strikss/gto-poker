@@ -1,4 +1,9 @@
-import { Geist, Geist_Mono, Shadows_Into_Light } from "next/font/google";
+import {
+  Geist,
+  Geist_Mono,
+  Shadows_Into_Light,
+  Poppins,
+} from "next/font/google";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -16,4 +21,10 @@ const shadowsIntoLight = Shadows_Into_Light({
   weight: "400",
 });
 
-export { geistSans, geistMono, shadowsIntoLight };
+const poppins = Poppins({
+  variable: "--font-poppins",
+  subsets: ["latin"],
+  weight: ["400", "500", "600", "700"],
+});
+
+export { geistSans, geistMono, shadowsIntoLight, poppins };

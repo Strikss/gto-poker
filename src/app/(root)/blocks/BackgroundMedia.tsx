@@ -1,7 +1,7 @@
 "use client";
 
 import { manifest } from "@/libs/videoManifest";
-import { shadowsIntoLight } from "@/styles/fonts";
+import { poppins } from "@/styles/fonts";
 import clsx from "clsx";
 import { AnimatePresence, motion } from "motion/react";
 import { useEffect, useRef } from "react";
@@ -21,6 +21,7 @@ export const videoKeysMap = {
 
 export default function BackgroundMedia() {
   const videoRef = useRef<HTMLVideoElement[]>([]);
+  const visited = localStorage.getItem("hasVisited") === "true";
   const { isPlaying, setIsPlaying, activeVideo, setActiveVideo } =
     useVideoStore();
 
@@ -43,7 +44,6 @@ export default function BackgroundMedia() {
 
   useEffect(() => {
     try {
-      const visited = localStorage.getItem("hasVisited") === "true";
       if (visited) {
         setIsPlaying(false);
         setActiveVideo("average");
@@ -89,16 +89,13 @@ export default function BackgroundMedia() {
             <motion.button
               type="button"
               onClick={playVideo}
-              className={clsx(
-                shadowsIntoLight.className,
-                "text-4xl rounded-full"
-              )}
+              className={clsx(poppins.className, "text-4xl rounded-full")}
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0, transition: { duration: 1.5 } }}
               transition={{ duration: 3 }}
             >
-              Knock the door
+              Knock on the door to enter
             </motion.button>
           </AnimatePresence>
         )}
