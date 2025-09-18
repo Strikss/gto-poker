@@ -3,11 +3,11 @@
 import { shadowsIntoLight } from "@/styles/fonts";
 import clsx from "clsx";
 import { AnimatePresence, motion } from "motion/react";
-import { useRef } from "react";
+import { useEffect, useRef } from "react";
 
 import { create } from "zustand";
 
-type VideoKeys = "greetings" | "impressed" | "laughing" | "average";
+type VideoKeys = "greetings" | "impressed" | "laughing" | "average" | "waiting";
 
 type Store = {
   isPlaying: boolean;
@@ -16,28 +16,34 @@ type Store = {
   setActiveVideo: (activeVideo: VideoKeys) => void;
 };
 
-const useSoundStore = create<Store>()((set) => ({
+export const useVideoStore = create<Store>()((set) => ({
   isPlaying: false,
   setIsPlaying: (isPlaying: boolean) => set({ isPlaying }),
   activeVideo: "greetings",
   setActiveVideo: (activeVideo: VideoKeys) => set({ activeVideo }),
 }));
 
+const videoKeysMap = {
+  greetings: 0,
+  impressed: 1,
+  laughing: 2,
+  average: 3,
+  waiting: 4,
+};
+
 export default function BackgroundMedia() {
   const videoRef = useRef<HTMLVideoElement[]>([]);
 
-  const { isPlaying, setIsPlaying, activeVideo, setActiveVideo } =
-    useSoundStore();
+  const { isPlaying, setIsPlaying, activeVideo } = useVideoStore();
 
   const playVideo = () => {
     setIsPlaying(true);
-    videoRef.current[0]?.play();
+    videoRef.current[videoKeysMap["greetings"]]?.play();
   };
 
-  const playVideo2 = () => {
-    setActiveVideo("impressed");
-    videoRef.current[1]?.play();
-  };
+  useEffect(() => {
+    videoRef.current[videoKeysMap[activeVideo]]?.play();
+  }, [activeVideo]);
 
   return (
     <>
@@ -45,7 +51,8 @@ export default function BackgroundMedia() {
         <AnimatePresence>
           <motion.video
             ref={(el) => {
-              videoRef.current[0] = el as HTMLVideoElement;
+              videoRef.current[videoKeysMap["greetings"]] =
+                el as HTMLVideoElement;
             }}
             key="greetings"
             src="/media/video/greetings.mp4"
@@ -61,15 +68,16 @@ export default function BackgroundMedia() {
           />
           <motion.video
             ref={(el) => {
-              videoRef.current[1] = el as HTMLVideoElement;
+              videoRef.current[videoKeysMap["waiting"]] =
+                el as HTMLVideoElement;
             }}
             key="impressed"
-            src="/media/video/impressed.mp4"
+            src="/media/video/waiting.mp4"
             className="h-full w-full object-contain"
             style={{
-              zIndex: activeVideo === "impressed" ? 2 : 1,
+              zIndex: activeVideo === "waiting" ? 2 : 1,
               position: "absolute",
-              opacity: activeVideo === "impressed" ? 1 : 0,
+              opacity: activeVideo === "waiting" ? 1 : 0,
               maskImage:
                 "linear-gradient(to right, transparent 0%, black 50%, black 50%, transparent 100%)",
             }}
@@ -93,13 +101,6 @@ export default function BackgroundMedia() {
               transition={{ duration: 3 }}
             >
               Knock the door
-            </motion.button>
-          </AnimatePresence>
-        )}
-        {isPlaying && (
-          <AnimatePresence>
-            <motion.button type="button" onClick={playVideo2} className="">
-              Play 2
             </motion.button>
           </AnimatePresence>
         )}

@@ -4,12 +4,13 @@ import { Dropzone } from "./blocks/Dropzone";
 import { _postImage } from "@/api/mutations/_postImage";
 
 import { useMutation } from "@tanstack/react-query";
-import BackgroundMedia from "./blocks/BackgroundMedia";
+import BackgroundMedia, { useVideoStore } from "./blocks/BackgroundMedia";
 
 export default function Home() {
   const { mutate: postImage, isPending } = useMutation({
     mutationFn: _postImage,
   });
+  const { setActiveVideo } = useVideoStore();
 
   const onFiles = async (files: File[]) => {
     const image = files[0];
@@ -18,6 +19,8 @@ export default function Home() {
       console.error("No image file provided");
       return;
     }
+
+    setActiveVideo("waiting");
 
     const binaryData = await image.arrayBuffer();
 
