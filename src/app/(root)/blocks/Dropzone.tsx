@@ -8,6 +8,7 @@ type DropzoneProps = {
 	accept?: string;
 	multiple?: boolean;
 	className?: string;
+	disabled?: boolean;
 };
 
 export function Dropzone({
@@ -15,6 +16,7 @@ export function Dropzone({
 	accept = "image/*",
 	multiple = true,
 	className = "",
+	disabled = false,
 }: DropzoneProps) {
 	const [isDragging, setIsDragging] = useState(false);
 	const [isHover, setIsHover] = useState(false);
@@ -31,11 +33,13 @@ export function Dropzone({
 	);
 
 	const openFileDialog = useCallback(() => {
+		if (disabled) return;
 		inputRef.current?.click();
-	}, []);
+	}, [disabled]);
 
 	const emitFiles = useCallback(
 		(filesList: FileList | File[] | null | undefined) => {
+			if (disabled) return;
 			if (!filesList || (Array.isArray(filesList) && filesList.length === 0)) return;
 			const files = Array.from(filesList as FileList);
 			const filtered = acceptedMimePatterns.length
@@ -49,53 +53,65 @@ export function Dropzone({
 				: files;
 			onFiles?.(multiple ? filtered : filtered.slice(0, 1));
 		},
-		[acceptedMimePatterns, multiple, onFiles]
+		[acceptedMimePatterns, multiple, onFiles, disabled]
 	);
 
 	const onInputChange = useCallback<React.ChangeEventHandler<HTMLInputElement>>(
 		(e) => {
+			if (disabled) return;
 			emitFiles(e.target.files);
 			e.target.value = ""; // allow re-selecting same file
 		},
-		[emitFiles]
+		[emitFiles, disabled]
 	);
 
-	const onDragOver = useCallback<React.DragEventHandler<HTMLDivElement>>((e) => {
-		e.preventDefault();
-		e.dataTransfer.dropEffect = "copy";
-		setIsDragging(true);
-	}, []);
+	const onDragOver = useCallback<React.DragEventHandler<HTMLDivElement>>(
+		(e) => {
+			if (disabled) return;
+			e.preventDefault();
+			e.dataTransfer.dropEffect = "copy";
+			setIsDragging(true);
+		},
+		[disabled]
+	);
 
 	const onDragEnter = useCallback<React.DragEventHandler<HTMLDivElement>>(() => {
+		if (disabled) return;
 		setIsDragging(true);
-	}, []);
+	}, [disabled]);
 
-	const onDragLeave = useCallback<React.DragEventHandler<HTMLDivElement>>((e) => {
-		// Only reset if we're leaving the root
-		if (!rootRef.current) return;
-		const rect = rootRef.current.getBoundingClientRect();
-		const { clientX, clientY } = e;
-		if (
-			clientX <= rect.left ||
-			clientX >= rect.right ||
-			clientY <= rect.top ||
-			clientY >= rect.bottom
-		) {
-			setIsDragging(false);
-		}
-	}, []);
+	const onDragLeave = useCallback<React.DragEventHandler<HTMLDivElement>>(
+		(e) => {
+			if (disabled) return;
+			// Only reset if we're leaving the root
+			if (!rootRef.current) return;
+			const rect = rootRef.current.getBoundingClientRect();
+			const { clientX, clientY } = e;
+			if (
+				clientX <= rect.left ||
+				clientX >= rect.right ||
+				clientY <= rect.top ||
+				clientY >= rect.bottom
+			) {
+				setIsDragging(false);
+			}
+		},
+		[disabled]
+	);
 
 	const onDrop = useCallback<React.DragEventHandler<HTMLDivElement>>(
 		(e) => {
+			if (disabled) return;
 			e.preventDefault();
 			setIsDragging(false);
 			emitFiles(e.dataTransfer.files);
 		},
-		[emitFiles]
+		[emitFiles, disabled]
 	);
 
 	const onPaste = useCallback<React.ClipboardEventHandler<HTMLDivElement>>(
 		(e) => {
+			if (disabled) return;
 			const files: File[] = [];
 			for (const item of Array.from(e.clipboardData.items)) {
 				if (item.kind === "file") {
@@ -107,24 +123,28 @@ export function Dropzone({
 				emitFiles(files);
 			}
 		},
-		[emitFiles]
+		[emitFiles, disabled]
 	);
 
 	const onKeyDown = useCallback<React.KeyboardEventHandler<HTMLDivElement>>(
 		(e) => {
+			if (disabled) return;
 			if (e.key === "Enter" || e.key === " ") {
 				e.preventDefault();
 				openFileDialog();
 			}
 		},
-		[openFileDialog]
+		[openFileDialog, disabled]
 	);
 
 	return (
 		<div className={className}>
 			<motion.div
 				ref={rootRef}
-				onPointerEnter={() => setIsHover(true)}
+				onPointerEnter={() => {
+					if (disabled) return;
+					setIsHover(true);
+				}}
 				onPointerLeave={() => setIsHover(false)}
 				onDragOver={onDragOver}
 				onDragEnter={onDragEnter}
