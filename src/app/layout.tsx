@@ -6,7 +6,6 @@ import { PropsWithChildren } from "react";
 
 import "@/styles/tailwind.css";
 import { QueryProvider } from "@/libs/QueryProvider";
-import { Header } from "./blocks/Header";
 
 export const metadata: Metadata = {
   title: ``,
@@ -28,7 +27,6 @@ function BaseLayout({ children }: PropsWithChildren) {
 function RootLayout({ children }: PropsWithChildren) {
   return (
     <BaseLayout>
-      <Header />
       <main>{children}</main>
     </BaseLayout>
   );
