@@ -1,16 +1,18 @@
 import { useQuery } from "@tanstack/react-query";
 import { apiFetch } from "..";
+import { PostResponse } from "../mutations/_postImage";
 
 type Hand = {
-	userCards: Record<string, string>[];
-	flop: Record<string, string>[];
-	score: number;
-	win: boolean;
-	amount: number;
+	data: PostResponse & { small_blind: number };
+	id: string;
 };
 
-function _getHands() {
-	return apiFetch("/hands");
+async function _getHands() {
+	const data = await apiFetch<Hand[]>("/hands");
+	const filtered = data.filter((el) => !!el.data.small_blind);
+	const mapped = filtered.map((el) => ({ ...el.data, gtoScore: Math.floor(Math.random() * 100) + 1 }));
+
+	return mapped;
 }
 
 function useGetHands() {

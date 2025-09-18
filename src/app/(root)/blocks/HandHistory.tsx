@@ -1,5 +1,6 @@
 "use client";
 
+import { getInfoFromHand } from "@/api/mutations/_postImage";
 import { useGetHands } from "@/api/queries/_getHands";
 import Icons from "@/icons";
 import { motion, AnimatePresence } from "motion/react";
@@ -63,16 +64,21 @@ function HandHistory({ open, handleClose }: HandHistoryProps) {
 						</div>
 
 						{/* Content */}
-						<div className="flex-1 p-4 overflow-y-auto">
-							<div className="text-gray-600">
-								<Hand
-									userCards={userCards}
-									flop={flop}
-									score={score}
-									amount={amount}
-									win={win}
-								/>
-							</div>
+						<div className="flex-1 p-4 overflow-y-auto flex flex-col gap-8">
+							{data?.map((el, idx) => {
+								const goodData = getInfoFromHand(el);
+								return (
+									<Hand
+										key={goodData.id + idx}
+										userCards={goodData.currentPlayer ?? []}
+										flop={goodData.flop}
+										score={goodData.gtoScore}
+										amount={goodData.totalPot}
+										buyIn={goodData.buyIn}
+										win={goodData.isWinner}
+									/>
+								);
+							})}
 						</div>
 					</motion.div>
 				</>
@@ -86,29 +92,29 @@ export type HandHistory = {
 	flop: Record<string, string>[];
 	score: number;
 	win: boolean;
+	buyIn: number;
 	amount: number;
 };
 
-export function Hand({ userCards, flop, score, amount, win }: HandHistory) {
+export function Hand({ userCards, flop, score, amount, win, buyIn }: HandHistory) {
 	return (
 		<div>
 			<div className="flex mb-2">
 				<div className="flex gap-1 mr-8">
-					{userCards.map((card) => (
+					{userCards?.map((card) => (
 						<Card suit={card.suit} rank={card.rank} key={"USER_" + card.suit + card.rank} />
 					))}
-					<Card suit="spades" rank="A" />
-					<Card suit="hearts" rank="K" />
 				</div>
 				<div className="flex gap-1">
-					{flop.map((card) => (
-						<Card suit={card.suit} rank={card.rank} key={card.suit + card.rank} />
+					{flop?.map((card) => (
+						<Card suit={card.suit} rank={card.rank} key={card.suit + card.rank + "RANK"} />
 					))}
 				</div>
 			</div>
 			<div className="text-white/50">
 				<p>
-					Excellent, <span className="font-bold text-white/70">${amount}</span>{" "}
+					Excellent,{" "}
+					<span className="font-bold text-white/70">${win ? amount / 100 : buyIn}</span>{" "}
 					<span>{win ? "won" : "lost"}</span>
 				</p>
 				<p>
@@ -119,10 +125,10 @@ export function Hand({ userCards, flop, score, amount, win }: HandHistory) {
 	);
 }
 const SuitToIcon = {
-	spades: Icons.spades,
-	hearts: Icons.hearts,
-	clubs: Icons.clubs,
-	diamonds: Icons.diamonds,
+	s: Icons.spades,
+	h: Icons.hearts,
+	c: Icons.clubs,
+	d: Icons.diamonds,
 };
 
 function Card({ suit, rank }: { suit: string; rank: string }) {

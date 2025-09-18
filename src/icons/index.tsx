@@ -5,6 +5,7 @@ const Icons = {
 	hearts: dynamic(() => import("public/svgs/hearts.svg")),
 	clubs: dynamic(() => import("public/svgs/clubs.svg")),
 	diamonds: dynamic(() => import("public/svgs/diamonds.svg")),
+	spinner: dynamic(() => import("public/svgs/spinner.svg")),
 };
 
 export default Icons;
