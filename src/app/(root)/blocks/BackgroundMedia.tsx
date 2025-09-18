@@ -23,6 +23,7 @@ export const videoKeysMap = {
 export default function BackgroundMedia() {
   const videoRef = useRef<HTMLVideoElement[]>([]);
   const [isFirstVisit, setIsFirstVisit] = useState<boolean>(true);
+  const [hasWaitingLooped, setHasWaitingLooped] = useState<boolean>(false);
   const { isPlaying, setIsPlaying, activeVideo, setActiveVideo } =
     useVideoStore();
 
@@ -65,6 +66,16 @@ export default function BackgroundMedia() {
     }
   }, [activeVideo, isPlaying]);
 
+  useEffect(() => {
+    if (
+      activeVideo === "waiting1" ||
+      activeVideo === "waiting2" ||
+      activeVideo === "waiting3"
+    ) {
+      setHasWaitingLooped(false);
+    }
+  }, [activeVideo]);
+
   return (
     <>
       <div
@@ -96,7 +107,13 @@ export default function BackgroundMedia() {
             }}
             preload="auto"
             playsInline
-            muted={activeVideo === "basic"}
+            muted={
+              activeVideo === "basic" ||
+              ((activeVideo === "waiting1" ||
+                activeVideo === "waiting2" ||
+                activeVideo === "waiting3") &&
+                hasWaitingLooped)
+            }
             autoPlay={isPlaying}
             loop={activeVideo === "basic"}
             onEnded={() => {
@@ -105,6 +122,19 @@ export default function BackgroundMedia() {
                   localStorage.setItem("introCompleted", "true");
                 } catch {}
                 setIsFirstVisit(false);
+              }
+              if (
+                activeVideo === "waiting1" ||
+                activeVideo === "waiting2" ||
+                activeVideo === "waiting3"
+              ) {
+                setHasWaitingLooped(true);
+                const el = videoRef.current[videoKeysMap[activeVideo]];
+                if (el) {
+                  el.currentTime = 0;
+                  el.play().catch(() => {});
+                }
+                return;
               }
               if (activeVideo !== "basic") {
                 setActiveVideo("basic");
