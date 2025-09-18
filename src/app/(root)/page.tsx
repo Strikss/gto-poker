@@ -59,7 +59,7 @@ export default function Home() {
 		<section className="h-screen flex-col items-center justify-center gap-4">
 			<BackgroundMedia />
 			{activeVideo !== "greeting" && <Dropzone onFiles={onFiles} disabled={isPending} />}
-			<div className="fixed flex left-4 top-4 right-4 gap-8">
+			<div className="fixed flex left-4 top-4 right-4 gap-8 z-50">
 				<motion.img
 					src="/media/img/solvazar.png"
 					alt="logo"
