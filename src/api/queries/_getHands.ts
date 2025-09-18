@@ -9,10 +9,13 @@ type Hand = {
 
 async function _getHands() {
 	const data = await apiFetch<Hand[]>("/hands");
-	const filtered = data.filter((el) => !!el.data.small_blind);
-	const mapped = filtered.map((el) => ({ ...el.data, gtoScore: Math.floor(Math.random() * 100) + 1 }));
+	const filtered = data?.filter((el) => !!el.data.small_blind);
+	const mapped = filtered?.map((el) => ({
+		...el.data,
+		gtoScore: Math.floor(Math.random() * 100) + 1,
+	}));
 
-	return mapped;
+	return mapped?.reverse();
 }
 
 function useGetHands() {

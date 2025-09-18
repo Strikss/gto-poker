@@ -96,7 +96,7 @@ export type HandHistory = {
 	amount: number;
 };
 
-export function Hand({ userCards, flop, score, amount, win, buyIn }: HandHistory) {
+export function Hand({ userCards, flop, amount, win, buyIn }: HandHistory) {
 	return (
 		<div>
 			<div className="flex mb-2">
@@ -113,12 +113,9 @@ export function Hand({ userCards, flop, score, amount, win, buyIn }: HandHistory
 			</div>
 			<div className="text-white/50">
 				<p>
-					Excellent,{" "}
+					{win ? "Excellent" : "Terrible"},{" "}
 					<span className="font-bold text-white/70">${win ? amount / 100 : buyIn}</span>{" "}
 					<span>{win ? "won" : "lost"}</span>
-				</p>
-				<p>
-					GTO Score <span className="font-bold text-white/70">{score}%</span>
 				</p>
 			</div>
 		</div>
