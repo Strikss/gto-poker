@@ -1,9 +1,10 @@
 import dynamic from "next/dynamic";
 
 const Icons = {
-	FileIcon: dynamic(() => import("public/svgs/file.svg")),
-	GlobeIcon: dynamic(() => import("public/svgs/globe.svg")),
-	WindowIcon: dynamic(() => import("public/svgs/window.svg")),
+	spades: dynamic(() => import("public/svgs/spades.svg")),
+	hearts: dynamic(() => import("public/svgs/hearts.svg")),
+	clubs: dynamic(() => import("public/svgs/clubs.svg")),
+	diamonds: dynamic(() => import("public/svgs/diamonds.svg")),
 };
 
 export default Icons;
