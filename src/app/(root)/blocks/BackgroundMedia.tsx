@@ -4,7 +4,7 @@ import { manifest } from "@/libs/videoManifest";
 import { poppins } from "@/styles/fonts";
 import clsx from "clsx";
 import { AnimatePresence, motion } from "motion/react";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useVideoStore } from "@/store/VideoStore";
 
 export const videoKeysMap = {
@@ -21,7 +21,7 @@ export const videoKeysMap = {
 
 export default function BackgroundMedia() {
   const videoRef = useRef<HTMLVideoElement[]>([]);
-  const visited = localStorage.getItem("hasVisited") === "true";
+  const [isFirstVisit, setIsFirstVisit] = useState<boolean>(true);
   const { isPlaying, setIsPlaying, activeVideo, setActiveVideo } =
     useVideoStore();
 
@@ -44,6 +44,8 @@ export default function BackgroundMedia() {
 
   useEffect(() => {
     try {
+      const visited = localStorage.getItem("hasVisited") === "true";
+      setIsFirstVisit(!visited);
       if (visited) {
         setIsPlaying(false);
         setActiveVideo("average");
@@ -64,7 +66,19 @@ export default function BackgroundMedia() {
 
   return (
     <>
-      <div className="pointer-events-none fixed inset-0 -z-10 overflow-hidden bg-black">
+      <div
+        className={clsx(
+          "fixed inset-0 overflow-hidden bg-black",
+          isFirstVisit && activeVideo === "greetings" && !isPlaying
+            ? "pointer-events-auto z-40 cursor-pointer"
+            : "pointer-events-none -z-10"
+        )}
+        onClick={
+          isFirstVisit && activeVideo === "greetings" && !isPlaying
+            ? playVideo
+            : undefined
+        }
+      >
         <AnimatePresence>
           <motion.video
             ref={(el) => {
@@ -87,26 +101,24 @@ export default function BackgroundMedia() {
                 } catch {}
                 setIsPlaying(false);
                 setActiveVideo("average");
+                setIsFirstVisit(false);
               }
             }}
           />
         </AnimatePresence>
       </div>
-      <div className="cursor-pointer z-50 absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
+      <div className="cursor-pointer z-50 absolute bottom-[90px] left-1/2 -translate-x-1/2 -translate-y-1/2">
         {!isPlaying && activeVideo === "greetings" && (
-          <AnimatePresence>
-            <motion.button
-              type="button"
-              onClick={playVideo}
-              className={clsx(poppins.className, "text-4xl rounded-full")}
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0, transition: { duration: 1.5 } }}
-              transition={{ duration: 3 }}
-            >
-              Knock on the door to enter
-            </motion.button>
-          </AnimatePresence>
+          <motion.button
+            type="button"
+            className={clsx(poppins.className, "text-[22px]")}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0, transition: { duration: 1 } }}
+            transition={{ duration: 3 }}
+          >
+            Knock on the door to enter
+          </motion.button>
         )}
       </div>
     </>

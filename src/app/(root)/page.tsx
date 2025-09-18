@@ -8,7 +8,7 @@ import { useMutation } from "@tanstack/react-query";
 import BackgroundMedia from "./blocks/BackgroundMedia";
 import { useVideoStore } from "@/store/VideoStore";
 import { ClipId } from "@/libs/videoManifest";
-import { AnimatePresence } from "motion/react";
+import { AnimatePresence, motion } from "motion/react";
 import { HandPopup } from "./blocks/HandPopup";
 import HandHistory from "./blocks/HandHistory";
 import Image from "next/image";
@@ -51,12 +51,16 @@ export default function Home() {
       {activeVideo !== "greetings" && (
         <Dropzone onFiles={onFiles} disabled={isPending} />
       )}
-      <div className="fixed flex left-4 top-4 right-4 gap-8 items-center">
-        <Image
+      <div className="fixed flex left-4 top-4 right-4 gap-8 items-center z-50">
+        <motion.img
           src="/media/img/solvazar.png"
           alt="logo"
           width={150}
           height={150}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0, transition: { duration: 1 } }}
+          transition={{ duration: 3 }}
         />
         {activeVideo !== "greetings" && (
           <div className="flex flex-col gap-4 ml-auto">
