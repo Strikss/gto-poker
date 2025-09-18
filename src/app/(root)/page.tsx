@@ -29,8 +29,7 @@ export default function Home() {
 	return (
 		<section className="h-screen flex-col items-center justify-center gap-4">
 			<BackgroundMedia />
-			{/* {isPending && <div>Uploading...</div>} */}
-			{/* <Dropzone onFiles={onFiles} disabled={isPending} /> */}
+			<Dropzone onFiles={onFiles} disabled={isPending} />
 		</section>
 	);
 }

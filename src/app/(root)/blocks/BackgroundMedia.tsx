@@ -10,7 +10,7 @@ type Store = {
 	setIsPlaying: (isPlaying: boolean) => void;
 };
 
-const useSoundStore = create<Store>()((set) => ({
+export const useSoundStore = create<Store>()((set) => ({
 	isPlaying: false,
 	setIsPlaying: (isPlaying: boolean) => set({ isPlaying }),
 }));
