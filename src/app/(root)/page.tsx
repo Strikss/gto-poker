@@ -58,7 +58,7 @@ export default function Home() {
 	return (
 		<section className="h-screen flex-col items-center justify-center gap-4">
 			<BackgroundMedia />
-			{activeVideo !== "greetings" && <Dropzone onFiles={onFiles} disabled={isPending} />}
+			{activeVideo !== "greeting" && <Dropzone onFiles={onFiles} disabled={isPending} />}
 			<div className="fixed flex left-4 top-4 right-4 gap-8">
 				<motion.img
 					src="/media/img/solvazar.png"
@@ -71,7 +71,7 @@ export default function Home() {
 					transition={{ duration: 3 }}
 					className="self-start"
 				/>
-				{activeVideo !== "greetings" && (
+				{activeVideo !== "greeting" && (
 					<div className="flex flex-col gap-4 ml-auto">
 						<button
 							onClick={() => setIsHandHistoryOpen(true)}
