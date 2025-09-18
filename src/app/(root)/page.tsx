@@ -11,6 +11,7 @@ import { ClipId } from "@/libs/videoManifest";
 import { AnimatePresence } from "motion/react";
 import { HandPopup } from "./blocks/HandPopup";
 import HandHistory from "./blocks/HandHistory";
+import Image from "next/image";
 
 export default function Home() {
 	const [isHandHistoryOpen, setIsHandHistoryOpen] = useState(false);
@@ -49,16 +50,19 @@ export default function Home() {
 		<section className="h-screen flex-col items-center justify-center gap-4">
 			<BackgroundMedia />
 			<Dropzone onFiles={onFiles} disabled={isPending} />
-			<div className="fixed flex flex-col top-4 right-4 items-end gap-8">
-				<button
-					onClick={() => setIsHandHistoryOpen(true)}
-					className="shadow-lg p-3 text-white/70 bg-white/10 hover:bg-white/20 transition-colors w-fit"
-				>
-					Hand History
-				</button>
-				<AnimatePresence>
-					{handPopupOpen && <HandPopup handleClose={() => setHandPopupOpen(false)} />}
-				</AnimatePresence>
+			<div className="fixed flex left-4 top-4 right-4 gap-8 items-center">
+				<Image src="/media/img/solvazar.png" alt="logo" width={150} height={150} />
+				<div className="flex flex-col gap-4 ml-auto">
+					<button
+						onClick={() => setIsHandHistoryOpen(true)}
+						className="shadow-lg p-3 text-white/70 bg-white/10 hover:bg-white/20 transition-colors w-fit"
+					>
+						Hand History
+					</button>
+					<AnimatePresence>
+						{handPopupOpen && <HandPopup handleClose={() => setHandPopupOpen(false)} />}
+					</AnimatePresence>
+				</div>
 			</div>
 
 			<HandHistory open={isHandHistoryOpen} handleClose={() => setIsHandHistoryOpen(false)} />
