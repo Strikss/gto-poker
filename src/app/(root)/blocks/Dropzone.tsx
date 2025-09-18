@@ -2,6 +2,8 @@
 
 import { useCallback, useMemo, useRef, useState } from "react";
 import { AnimatePresence, motion } from "motion/react";
+import { useVideoStore } from "@/store/VideoStore";
+import { shadowsIntoLight } from "@/styles/fonts";
 
 type DropzoneProps = {
   onFiles?: (files: File[]) => void;
@@ -21,6 +23,7 @@ export function Dropzone({
   const [isDragging, setIsDragging] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
   const rootRef = useRef<HTMLDivElement>(null);
+  const { isPlaying } = useVideoStore();
 
   const acceptedMimePatterns = useMemo(
     () =>
@@ -156,6 +159,20 @@ export function Dropzone({
           />
         )}
       </AnimatePresence>
+      {!isPlaying && (
+        <motion.div
+          className="pointer-events-none absolute bottom-6 left-1/2 -translate-x-1/2 text-white drop-shadow-md"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 1.5 }}
+        >
+          <span
+            className={`${shadowsIntoLight.className} text-3xl md:text-4xl`}
+          >
+            Drag & Drop file
+          </span>
+        </motion.div>
+      )}
     </motion.div>
   );
 }
