@@ -3,24 +3,16 @@
 import { playSound } from "@/utils/playSound";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { create } from "zustand";
-import { persist } from "zustand/middleware";
 
 type Store = {
 	isPlaying: boolean;
 	setIsPlaying: (isPlaying: boolean) => void;
 };
 
-const useSoundStore = create<Store>()(
-	persist(
-		(set) => ({
-			isPlaying: false,
-			setIsPlaying: (isPlaying: boolean) => set({ isPlaying }),
-		}),
-		{
-			name: "background-media-storage",
-		}
-	)
-);
+const useSoundStore = create<Store>()((set) => ({
+	isPlaying: false,
+	setIsPlaying: (isPlaying: boolean) => set({ isPlaying }),
+}));
 
 export default function BackgroundMedia() {
 	const videoRef = useRef<HTMLVideoElement | null>(null);
