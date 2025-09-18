@@ -17,6 +17,7 @@ export const videoKeysMap = {
   waiting3: 6,
   download: 7,
   error: 8,
+  basic: 9,
 };
 
 export default function BackgroundMedia() {
@@ -47,8 +48,8 @@ export default function BackgroundMedia() {
       const visited = localStorage.getItem("hasVisited") === "true";
       setIsFirstVisit(!visited);
       if (visited) {
-        setIsPlaying(false);
-        setActiveVideo("average");
+        setActiveVideo("basic");
+        setIsPlaying(true);
       }
     } catch {}
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -94,14 +95,21 @@ export default function BackgroundMedia() {
                 "linear-gradient(to right, transparent 0%, black 50%, black 50%, transparent 100%)",
             }}
             preload="auto"
+            playsInline
+            muted={activeVideo === "basic"}
+            autoPlay={isPlaying}
+            loop={activeVideo === "basic"}
             onEnded={() => {
               if (activeVideo === "greetings") {
                 try {
                   localStorage.setItem("introCompleted", "true");
                 } catch {}
-                setIsPlaying(false);
-                setActiveVideo("average");
                 setIsFirstVisit(false);
+              }
+              if (activeVideo !== "basic") {
+                setActiveVideo("basic");
+                setIsFirstVisit(false);
+                setIsPlaying(true);
               }
             }}
           />

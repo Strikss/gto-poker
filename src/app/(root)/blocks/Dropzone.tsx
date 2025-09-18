@@ -23,7 +23,7 @@ export function Dropzone({
   const [isDragging, setIsDragging] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
   const rootRef = useRef<HTMLDivElement>(null);
-  const { isPlaying } = useVideoStore();
+  const { isPlaying, activeVideo } = useVideoStore();
 
   const acceptedMimePatterns = useMemo(
     () =>
@@ -159,18 +159,19 @@ export function Dropzone({
           />
         )}
       </AnimatePresence>
-      {!isPlaying && (
-        <motion.div
-          className="pointer-events-none absolute bottom-[90px] left-1/2 -translate-x-1/2 -translate-y-1/2 text-white drop-shadow-md text-center"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1, scale: 1.1 }}
-          transition={{ duration: 1.5 }}
-        >
-          <span className={`${poppins.className} text-[22px] text-center`}>
-            Drag and drop a screenshot of your poker play
-          </span>
-        </motion.div>
-      )}
+      {!isPlaying ||
+        (activeVideo === "basic" && (
+          <motion.div
+            className="pointer-events-none absolute bottom-[60px] left-1/2 -translate-x-1/2 -translate-y-1/2 text-white drop-shadow-md text-center"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1, scale: 1.1 }}
+            transition={{ duration: 1.5 }}
+          >
+            <span className={`${poppins.className} text-[22px] text-center`}>
+              Drag and drop a screenshot of your poker play
+            </span>
+          </motion.div>
+        ))}
     </motion.div>
   );
 }

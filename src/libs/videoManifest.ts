@@ -7,7 +7,9 @@ export type ClipId =
   | "waiting2"
   | "waiting3"
   | "download"
-  | "error";
+  | "error"
+  | "basic";
+
 export const manifest = {
   start: "greetings" as ClipId,
   clips: {
@@ -22,5 +24,6 @@ export const manifest = {
     average: { video: { mp4: "/media/video/average.mp4" } },
     impressed: { video: { mp4: "/media/video/impressed.mp4" } },
     error: { video: { mp4: "/media/video/error.mp4" } },
+    basic: { video: { mp4: "/media/video/basic.mp4" } },
   },
 } as const;

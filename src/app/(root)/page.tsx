@@ -11,7 +11,6 @@ import { ClipId } from "@/libs/videoManifest";
 import { AnimatePresence, motion } from "motion/react";
 import { HandPopup } from "./blocks/HandPopup";
 import HandHistory from "./blocks/HandHistory";
-import Image from "next/image";
 
 export default function Home() {
   const [isHandHistoryOpen, setIsHandHistoryOpen] = useState(false);
@@ -72,7 +71,23 @@ export default function Home() {
             </button>
             <AnimatePresence>
               {handPopupOpen && (
-                <HandPopup handleClose={() => setHandPopupOpen(false)} />
+                <HandPopup
+                  handleClose={() => setHandPopupOpen(false)}
+                  data={{
+                    userCards: [
+                      { suit: "hearts", rank: "A" },
+                      { suit: "spades", rank: "K" },
+                    ],
+                    flop: [
+                      { suit: "clubs", rank: "Q" },
+                      { suit: "diamonds", rank: "J" },
+                      { suit: "hearts", rank: "10" },
+                    ],
+                    score: 75,
+                    amount: 120,
+                    win: true,
+                  }}
+                />
               )}
             </AnimatePresence>
           </div>
