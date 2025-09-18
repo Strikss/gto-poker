@@ -4,7 +4,7 @@ import { manifest } from "@/libs/videoManifest";
 import { poppins } from "@/styles/fonts";
 import clsx from "clsx";
 import { AnimatePresence, motion } from "motion/react";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { useVideoStore } from "@/store/VideoStore";
 
 export const videoKeysMap = {
@@ -24,6 +24,7 @@ export default function BackgroundMedia() {
   const videoRef = useRef<HTMLVideoElement[]>([]);
   const [isFirstVisit, setIsFirstVisit] = useState<boolean>(true);
   const [hasWaitingLooped, setHasWaitingLooped] = useState<boolean>(false);
+  const [initDone, setInitDone] = useState<boolean>(false);
   const { isPlaying, setIsPlaying, activeVideo, setActiveVideo } =
     useVideoStore();
 
@@ -44,15 +45,20 @@ export default function BackgroundMedia() {
     }
   };
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     try {
       const visited = localStorage.getItem("hasVisited") === "true";
-      setIsFirstVisit(!visited);
       if (visited) {
+        setIsFirstVisit(false);
         setActiveVideo("basic");
         setIsPlaying(true);
+      } else {
+        setIsFirstVisit(true);
+        setActiveVideo("greetings");
+        setIsPlaying(false);
       }
     } catch {}
+    setInitDone(true);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -78,73 +84,75 @@ export default function BackgroundMedia() {
 
   return (
     <>
-      <div
-        className={clsx(
-          "fixed inset-0 overflow-hidden bg-black",
-          isFirstVisit && activeVideo === "greetings" && !isPlaying
-            ? "pointer-events-auto z-40 cursor-pointer"
-            : "pointer-events-none -z-10"
-        )}
-        onClick={
-          isFirstVisit && activeVideo === "greetings" && !isPlaying
-            ? playVideo
-            : undefined
-        }
-      >
-        <AnimatePresence>
-          <motion.video
-            ref={(el) => {
-              videoRef.current[videoKeysMap[activeVideo]] =
-                el as HTMLVideoElement;
-            }}
-            key={activeVideo}
-            src={manifest.clips[activeVideo].video.mp4}
-            className="h-full w-full object-contain"
-            style={{
-              position: "absolute",
-              maskImage:
-                "linear-gradient(to right, transparent 0%, black 50%, black 50%, transparent 100%)",
-            }}
-            preload="auto"
-            playsInline
-            muted={
-              activeVideo === "basic" ||
-              ((activeVideo === "waiting1" ||
-                activeVideo === "waiting2" ||
-                activeVideo === "waiting3") &&
-                hasWaitingLooped)
-            }
-            autoPlay={isPlaying}
-            loop={activeVideo === "basic"}
-            onEnded={() => {
-              if (activeVideo === "greetings") {
-                try {
-                  localStorage.setItem("introCompleted", "true");
-                } catch {}
-                setIsFirstVisit(false);
+      {initDone && (
+        <div
+          className={clsx(
+            "fixed inset-0 overflow-hidden bg-black",
+            isFirstVisit && activeVideo === "greetings" && !isPlaying
+              ? "pointer-events-auto z-40 cursor-pointer"
+              : "pointer-events-none -z-10"
+          )}
+          onClick={
+            isFirstVisit && activeVideo === "greetings" && !isPlaying
+              ? playVideo
+              : undefined
+          }
+        >
+          <AnimatePresence>
+            <motion.video
+              ref={(el) => {
+                videoRef.current[videoKeysMap[activeVideo]] =
+                  el as HTMLVideoElement;
+              }}
+              key={activeVideo}
+              src={manifest.clips[activeVideo].video.mp4}
+              className="h-full w-full object-contain"
+              style={{
+                position: "absolute",
+                maskImage:
+                  "linear-gradient(to right, transparent 0%, black 50%, black 50%, transparent 100%)",
+              }}
+              preload="auto"
+              playsInline
+              muted={
+                activeVideo === "basic" ||
+                ((activeVideo === "waiting1" ||
+                  activeVideo === "waiting2" ||
+                  activeVideo === "waiting3") &&
+                  hasWaitingLooped)
               }
-              if (
-                activeVideo === "waiting1" ||
-                activeVideo === "waiting2" ||
-                activeVideo === "waiting3"
-              ) {
-                setHasWaitingLooped(true);
-                const el = videoRef.current[videoKeysMap[activeVideo]];
-                if (el) {
-                  el.currentTime = 0;
-                  el.play().catch(() => {});
+              autoPlay={isPlaying}
+              loop={activeVideo === "basic"}
+              onEnded={() => {
+                if (activeVideo === "greetings") {
+                  try {
+                    localStorage.setItem("introCompleted", "true");
+                  } catch {}
+                  setIsFirstVisit(false);
                 }
-                return;
-              }
-              if (activeVideo !== "basic") {
-                setActiveVideo("basic");
-                setIsFirstVisit(false);
-                setIsPlaying(true);
-              }
-            }}
-          />
-        </AnimatePresence>
-      </div>
+                if (
+                  activeVideo === "waiting1" ||
+                  activeVideo === "waiting2" ||
+                  activeVideo === "waiting3"
+                ) {
+                  setHasWaitingLooped(true);
+                  const el = videoRef.current[videoKeysMap[activeVideo]];
+                  if (el) {
+                    el.currentTime = 0;
+                    el.play().catch(() => {});
+                  }
+                  return;
+                }
+                if (activeVideo !== "basic") {
+                  setActiveVideo("basic");
+                  setIsFirstVisit(false);
+                  setIsPlaying(true);
+                }
+              }}
+            />
+          </AnimatePresence>
+        </div>
+      )}
       <div className="cursor-pointer z-50 absolute bottom-[90px] left-1/2 -translate-x-1/2 -translate-y-1/2">
         {!isPlaying && activeVideo === "greetings" && (
           <motion.button
