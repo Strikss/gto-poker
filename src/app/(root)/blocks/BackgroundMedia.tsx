@@ -1,5 +1,6 @@
 "use client";
 
+import { playSound } from "@/utils/playSound";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
@@ -23,17 +24,10 @@ const useSoundStore = create<Store>()(
 
 export default function BackgroundMedia() {
 	const videoRef = useRef<HTMLVideoElement | null>(null);
-	const audioRef = useRef<HTMLAudioElement | null>(null);
 	const { isPlaying, setIsPlaying } = useSoundStore();
 
 	const [animateIntro, setAnimateIntro] = useState(false);
 	const [revealed, setRevealed] = useState(false);
-
-	// No localStorage gating: start on dark screen every visit
-	useEffect(() => {
-		setAnimateIntro(false);
-		setRevealed(false);
-	}, []);
 
 	useEffect(() => {
 		const video = videoRef.current;
@@ -51,42 +45,27 @@ export default function BackgroundMedia() {
 	const enableSound = useCallback(async () => {
 		setIsPlaying(true);
 		const video = videoRef.current;
-		let audio = audioRef.current;
+
 		if (!video) return;
-		if (!audio) {
-			audio = new Audio("/media/audio/GREETING.mp3");
-			audioRef.current = audio;
-		}
-		// Play 3s intro (fade+zoom) first, then start media simultaneously
+
 		const INTRO_MS = 3000;
-		// prepare
 		try {
 			video.pause();
 			video.currentTime = 0;
 			video.loop = true;
-			audio.currentTime = 0;
 		} catch {}
-		// stop video exactly when audio ends
-		if (audio) {
-			audio.onended = () => {
-				video.pause();
-				video.currentTime = 0;
-			};
-		}
+
 		// trigger transition
 		setAnimateIntro(true);
 		setTimeout(() => setRevealed(true), 30);
 		window.setTimeout(async () => {
 			try {
-				await Promise.all([video.play(), audio!.play()]);
+				await Promise.all([video.play(), playSound("GREETING")]);
 			} catch {
 				// ignore
 			}
 		}, INTRO_MS);
-	}, []);
-
-	// No video-end handling; audio controls final stop
-	useEffect(() => {}, []);
+	}, [setIsPlaying]);
 
 	return (
 		<div className="pointer-events-none fixed inset-0 -z-10 overflow-hidden bg-black">
