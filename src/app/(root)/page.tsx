@@ -58,19 +58,21 @@ export default function Home() {
           width={150}
           height={150}
         />
-        <div className="flex flex-col gap-4 ml-auto">
-          <button
-            onClick={() => setIsHandHistoryOpen(true)}
-            className="shadow-lg p-3 text-white/70 bg-white/10 hover:bg-white/20 transition-colors w-fit"
-          >
-            Hand History
-          </button>
-          <AnimatePresence>
-            {handPopupOpen && (
-              <HandPopup handleClose={() => setHandPopupOpen(false)} />
-            )}
-          </AnimatePresence>
-        </div>
+        {activeVideo !== "greetings" && (
+          <div className="flex flex-col gap-4 ml-auto">
+            <button
+              onClick={() => setIsHandHistoryOpen(true)}
+              className="shadow-lg p-3 text-white/70 bg-white/10 hover:bg-white/20 transition-colors w-fit"
+            >
+              Hand History
+            </button>
+            <AnimatePresence>
+              {handPopupOpen && (
+                <HandPopup handleClose={() => setHandPopupOpen(false)} />
+              )}
+            </AnimatePresence>
+          </div>
+        )}
       </div>
 
       <HandHistory
