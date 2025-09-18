@@ -7,7 +7,7 @@ import { useMutation } from "@tanstack/react-query";
 import BackgroundMedia, { useVideoStore } from "./blocks/BackgroundMedia";
 
 export default function Home() {
-  const { mutate: postImage, isPending } = useMutation({
+  const { mutateAsync: postImage, isPending } = useMutation({
     mutationFn: _postImage,
   });
   const { setActiveVideo } = useVideoStore();
@@ -24,9 +24,18 @@ export default function Home() {
 
     const binaryData = await image.arrayBuffer();
 
-    const response = await postImage({ binaryData, contentType: image.type });
-
-    console.log(response);
+    try {
+      const response = await postImage({ binaryData, contentType: image.type });
+      console.log(response);
+      if (response) {
+        setActiveVideo("download");
+      } else {
+        setActiveVideo("laughing");
+      }
+    } catch (error) {
+      console.error(error);
+      setActiveVideo("laughing");
+    }
   };
 
   return (

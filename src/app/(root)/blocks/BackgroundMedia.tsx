@@ -7,7 +7,13 @@ import { useEffect, useRef } from "react";
 
 import { create } from "zustand";
 
-type VideoKeys = "greetings" | "impressed" | "laughing" | "average" | "waiting";
+type VideoKeys =
+  | "greetings"
+  | "impressed"
+  | "laughing"
+  | "average"
+  | "waiting"
+  | "download";
 
 type Store = {
   isPlaying: boolean;
@@ -29,6 +35,7 @@ const videoKeysMap = {
   laughing: 2,
   average: 3,
   waiting: 4,
+  download: 5,
 };
 
 export default function BackgroundMedia() {
@@ -78,6 +85,40 @@ export default function BackgroundMedia() {
               zIndex: activeVideo === "waiting" ? 2 : 1,
               position: "absolute",
               opacity: activeVideo === "waiting" ? 1 : 0,
+              maskImage:
+                "linear-gradient(to right, transparent 0%, black 50%, black 50%, transparent 100%)",
+            }}
+            preload="auto"
+          />
+          <motion.video
+            ref={(el) => {
+              videoRef.current[videoKeysMap["download"]] =
+                el as HTMLVideoElement;
+            }}
+            key="download"
+            src="/media/video/download.mp4"
+            className="h-full w-full object-contain"
+            style={{
+              zIndex: activeVideo === "download" ? 2 : 1,
+              position: "absolute",
+              opacity: activeVideo === "download" ? 1 : 0,
+              maskImage:
+                "linear-gradient(to right, transparent 0%, black 50%, black 50%, transparent 100%)",
+            }}
+            preload="auto"
+          />
+          <motion.video
+            ref={(el) => {
+              videoRef.current[videoKeysMap["laughing"]] =
+                el as HTMLVideoElement;
+            }}
+            key="laughing"
+            src="/media/video/laughing.mp4"
+            className="h-full w-full object-contain"
+            style={{
+              zIndex: activeVideo === "laughing" ? 2 : 1,
+              position: "absolute",
+              opacity: activeVideo === "laughing" ? 1 : 0,
               maskImage:
                 "linear-gradient(to right, transparent 0%, black 50%, black 50%, transparent 100%)",
             }}
