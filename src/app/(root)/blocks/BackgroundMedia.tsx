@@ -2,7 +2,7 @@
 
 import { playSound } from "@/utils/playSound";
 import { motion } from "motion/react";
-import { useCallback, useRef } from "react";
+import { useCallback, useRef, useState } from "react";
 import { create } from "zustand";
 
 type Store = {
@@ -16,6 +16,7 @@ const useSoundStore = create<Store>()((set) => ({
 }));
 
 export default function BackgroundMedia() {
+	const [isPlayingVideo2, setIsPlayingVideo2] = useState(false);
 	const video1 = useRef<HTMLVideoElement | null>(null);
 	const video2 = useRef<HTMLVideoElement | null>(null);
 	const { isPlaying, setIsPlaying } = useSoundStore();
@@ -33,18 +34,39 @@ export default function BackgroundMedia() {
 	return (
 		<div className="pointer-events-none fixed inset-0 -z-10 overflow-hidden bg-black">
 			{isPlaying && (
-				<motion.video
-					ref={video1}
-					src="/media/video/initial_video.mp4"
-					className="h-full w-full object-contain"
-					preload="auto"
-					autoPlay
-					initial={{ opacity: 0 }}
-					animate={{
-						opacity: 1,
-					}}
-					transition={{ duration: 3 }}
-				/>
+				<>
+					{isPlayingVideo2 ? (
+						<motion.video
+							ref={video2}
+							src="/media/video/vizard_intro.mp4"
+							className="h-full w-full object-contain"
+							preload="auto"
+							autoPlay
+							initial={{ opacity: 0 }}
+							animate={{
+								opacity: 1,
+							}}
+							transition={{ duration: 1.5 }}
+						/>
+					) : (
+						<motion.video
+							ref={video1}
+							onEnded={() => {
+								console.log("video1 ended");
+								setIsPlayingVideo2(true);
+							}}
+							src="/media/video/initial_video.mp4"
+							className="h-full w-full object-contain"
+							preload="auto"
+							autoPlay
+							initial={{ opacity: 0 }}
+							animate={{
+								opacity: 1,
+							}}
+							transition={{ duration: 3 }}
+						/>
+					)}
+				</>
 			)}
 
 			<div className="pointer-events-auto absolute bottom-6 right-6">
