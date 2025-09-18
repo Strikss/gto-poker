@@ -1,7 +1,8 @@
 "use client";
 
 import { playSound } from "@/utils/playSound";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { motion } from "motion/react";
+import { useCallback, useRef } from "react";
 import { create } from "zustand";
 
 type Store = {
@@ -15,69 +16,36 @@ const useSoundStore = create<Store>()((set) => ({
 }));
 
 export default function BackgroundMedia() {
-	const videoRef = useRef<HTMLVideoElement | null>(null);
+	const video1 = useRef<HTMLVideoElement | null>(null);
+	const video2 = useRef<HTMLVideoElement | null>(null);
 	const { isPlaying, setIsPlaying } = useSoundStore();
-
-	const [animateIntro, setAnimateIntro] = useState(false);
-	const [revealed, setRevealed] = useState(false);
-
-	useEffect(() => {
-		const video = videoRef.current;
-		if (!video) return;
-		const handleLoaded = () => {
-			try {
-				video.currentTime = 0;
-				video.pause();
-			} catch {}
-		};
-		video.addEventListener("loadeddata", handleLoaded);
-		return () => video.removeEventListener("loadeddata", handleLoaded);
-	}, []);
 
 	const enableSound = useCallback(async () => {
 		setIsPlaying(true);
-		const video = videoRef.current;
-
-		if (!video) return;
 
 		const INTRO_MS = 3000;
-		try {
-			video.pause();
-			video.currentTime = 0;
-			video.loop = true;
-		} catch {}
 
-		// trigger transition
-		setAnimateIntro(true);
-		setTimeout(() => setRevealed(true), 30);
-		window.setTimeout(async () => {
-			try {
-				await Promise.all([video.play(), playSound("GREETING")]);
-			} catch {
-				// ignore
-			}
+		setTimeout(async () => {
+			playSound("GREETING");
 		}, INTRO_MS);
 	}, [setIsPlaying]);
 
 	return (
 		<div className="pointer-events-none fixed inset-0 -z-10 overflow-hidden bg-black">
-			<video
-				ref={videoRef}
-				src="/media/video/vizard_intro.mp4"
-				className="h-full w-full object-contain"
-				preload="auto"
-				playsInline
-				muted={false}
-				style={
-					animateIntro
-						? {
-								opacity: revealed ? 1 : 0,
-								transform: revealed ? "scale(1)" : "scale(0.9)",
-								transition: "opacity 3s ease, transform 3s ease",
-						  }
-						: { opacity: 0, transform: "scale(0.9)" }
-				}
-			/>
+			{isPlaying && (
+				<motion.video
+					ref={video1}
+					src="/media/video/initial_video.mp4"
+					className="h-full w-full object-contain"
+					preload="auto"
+					autoPlay
+					initial={{ opacity: 0 }}
+					animate={{
+						opacity: 1,
+					}}
+					transition={{ duration: 3 }}
+				/>
+			)}
 
 			<div className="pointer-events-auto absolute bottom-6 right-6">
 				{!isPlaying && (
