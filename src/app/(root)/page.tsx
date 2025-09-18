@@ -27,7 +27,6 @@ export default function Home() {
 	return (
 		<section className="flex min-h-[60vh] flex-col items-center justify-center gap-4">
 			{isPending && <div>Uploading...</div>}
-
 			<Dropzone onFiles={onFiles} disabled={isPending} />
 		</section>
 	);
