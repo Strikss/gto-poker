@@ -16,7 +16,7 @@ import Image from "next/image";
 export default function Home() {
   const [isHandHistoryOpen, setIsHandHistoryOpen] = useState(false);
   const [handPopupOpen, setHandPopupOpen] = useState(false);
-  const { setActiveVideo, setIsPlaying } = useVideoStore();
+  const { setActiveVideo, setIsPlaying, activeVideo } = useVideoStore();
   const { mutateAsync: postImage, isPending } = useMutation({
     mutationFn: _postImage,
   });
@@ -48,7 +48,9 @@ export default function Home() {
   return (
     <section className="h-screen flex-col items-center justify-center gap-4">
       <BackgroundMedia />
-      <Dropzone onFiles={onFiles} disabled={isPending} />
+      {activeVideo !== "greetings" && (
+        <Dropzone onFiles={onFiles} disabled={isPending} />
+      )}
       <div className="fixed flex left-4 top-4 right-4 gap-8 items-center">
         <Image
           src="/media/img/solvazar.png"

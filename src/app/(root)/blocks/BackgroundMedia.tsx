@@ -80,6 +80,15 @@ export default function BackgroundMedia() {
                 "linear-gradient(to right, transparent 0%, black 50%, black 50%, transparent 100%)",
             }}
             preload="auto"
+            onEnded={() => {
+              if (activeVideo === "greetings") {
+                try {
+                  localStorage.setItem("introCompleted", "true");
+                } catch {}
+                setIsPlaying(false);
+                setActiveVideo("average");
+              }
+            }}
           />
         </AnimatePresence>
       </div>
